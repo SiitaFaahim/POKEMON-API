@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My First API App</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #f0f0f0; padding: 50px; }
+        .card { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); display: inline-block; width: 300px; }
+        input { padding: 10px; border-radius: 5px; border: 1px solid #ccc; }
+        button { padding: 10px 20px; background: #ff1f1f; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        img { width: 150px; height: 150px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Pokémon Finder</h2>
+        <input type="text" id="pokemonName" placeholder="Type a name (e.g. ditto)">
+        <button onclick="findPokemon()">Search!</button>
+
+        <div id="result">
+            <p>Search for a Pokémon to see stats!</p>
+        </div>
+    </div>
+
+    <script>
+        // The "Brain" function
+        function findPokemon() {
+            const name = document.getElementById('pokemonName').value.toLowerCase();
+            const resultDiv = document.getElementById('result');
+
+            // 1. Send the "Delivery Dog" (Fetch)
+            fetch(`https://pokeapi.co/api/v2/pokemon/${name}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Not found!");
+                    return response.json();
+                })
+                .then(data => {
+                    // 2. Take the data out of the box and put it on the screen
+                    resultDiv.innerHTML = `
+                        <h3>${data.name.toUpperCase()}</h3>
+                        <img src="${data.sprites.front_default}" alt="${data.name}">
+                        <p>Type: ${data.types[0].type.name}</p>
+                        <p>Weight: ${data.weight}</p>
+                    `;
+                })
+                .catch(error => {
+                    resultDiv.innerHTML = "<p style='color:red;'>Oops! Pokémon not found.</p>";
+                });
+        }
+    </script>
+</body>
+</html>
